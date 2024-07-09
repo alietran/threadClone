@@ -18,7 +18,6 @@ class DatabaseService {
       await this.db.command({ ping: 1 })
       console.log('Pinged your deployment. You successfully connected to MongoDB!')
     } catch (err) {
-      console.log('error', err)
       throw err
     }
   }

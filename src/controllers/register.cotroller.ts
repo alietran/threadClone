@@ -10,7 +10,6 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
       result
     })
   } catch (err) {
-    console.log('err', err)
     return res.status(400).send({
       error: err
     })
