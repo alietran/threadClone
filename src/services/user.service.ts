@@ -1,5 +1,5 @@
 import { TokenType } from '~/constants/enums'
-import { RegisterDTO } from '~/models/schemas/dto/user.dto'
+import { RegisterDTO } from '~/models/dto/user.dto'
 import User from '~/models/schemas/User.schema'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'

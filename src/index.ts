@@ -1,5 +1,6 @@
 import express from 'express'
-import userRouter from './routes/users.router'
+import { defaultErrorHandler } from './middlewares/error.middleware'
+import userRouter from './routes/users.routes'
 import databaseService from './services/database.service'
 
 const app = express()
@@ -11,6 +12,9 @@ app.get('/', (req, res) => {
 databaseService.connect()
 
 app.use(express.json())
+
+//Xử lý error handler phải nhận về 4 tham số
+app.use(defaultErrorHandler)
 
 app.use('/api/user', userRouter)
 

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
 import userService from '~/services/user.service'
+import { USER_MESSAGE } from './../constants/messages'
 
 export const loginValidator = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body
@@ -16,35 +17,42 @@ export const registerValidator = checkSchema({
   name: {
     isLength: {
       options: { min: 1, max: 100 },
-      errorMessage: 'Name should be max 100 chars'
+      errorMessage: USER_MESSAGE.CONFIRM_PASSWORD_LENGTH
+    },
+    isString: {
+      errorMessage: USER_MESSAGE.NAME_MUST_BE_A_STRING
     },
     trim: true,
-    notEmpty: true
+    notEmpty: {
+      errorMessage: USER_MESSAGE.NAME_IS_REQUIRED
+    }
   },
   email: {
-    errorMessage: 'Invalid email',
-    isEmail: true,
-    notEmpty: true,
+    isEmail: {
+      errorMessage: USER_MESSAGE.EMAIL_IS_INVALID
+    },
+    notEmpty: {
+      errorMessage: USER_MESSAGE.EMAIL_IS_REQUIRED
+    },
     trim: true,
     custom: {
       options: async (value) => {
         const isExistEmail = await userService.emailExisted(value)
         if (isExistEmail) {
-          throw new Error('Email already exists')
+          throw new Error(USER_MESSAGE.EMAIL_ALREADY_EXIST)
         }
-        return isExistEmail
+        return true
       }
     }
   },
   password: {
     isLength: {
       options: { min: 6 },
-      errorMessage: 'Password should be at least 6 chars'
+      errorMessage: USER_MESSAGE.PASSWORD_LENGTH
     },
     notEmpty: true,
     isStrongPassword: {
-      errorMessage:
-        'Password must be at least 6 characters long and contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol',
+      errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_STRONG,
       options: {
         minLength: 6,
         minLowercase: 1,
@@ -57,13 +65,12 @@ export const registerValidator = checkSchema({
   confirm_password: {
     isLength: {
       options: { min: 6 },
-      errorMessage: 'Confirm password should be at least 6 chars'
+      errorMessage: USER_MESSAGE.PASSWORD_LENGTH
     },
     notEmpty: true,
 
     isStrongPassword: {
-      errorMessage:
-        'Password must be at least 6 characters long and contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol',
+      errorMessage: USER_MESSAGE.PASSWORD_MUST_BE_STRONG,
       options: {
         minLength: 6,
         minLowercase: 1,
@@ -75,7 +82,7 @@ export const registerValidator = checkSchema({
     custom: {
       options: (value, { req }) => {
         if (value !== req.body.password) {
-          throw new Error('Password confirmation does not match password')
+          throw new Error(USER_MESSAGE.CONFIRM_PASSWORD_NOT_MATCH)
         }
         return true
       }
@@ -86,7 +93,8 @@ export const registerValidator = checkSchema({
       options: {
         strict: true,
         strictSeparator: true
-      }
+      },
+      errorMessage: USER_MESSAGE.DATE_OF_BIRTH_MUST_BE_ISO8601
     }
   }
 })
