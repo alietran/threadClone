@@ -1,10 +1,13 @@
+import { config } from 'dotenv'
+import { ObjectId } from 'mongodb'
 import { TokenType } from '~/constants/enums'
 import { RegisterDTO } from '~/models/dto/user.dto'
+import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import User from '~/models/schemas/User.schema'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import databaseService from './database.service'
-
+config()
 class UsersService {
   private signAccessToken(user_id: string) {
     return signToken({
@@ -31,32 +34,34 @@ class UsersService {
   }
 
   async register(payload: RegisterDTO) {
-    //REGISTER MANY USERS AT ONCE TIME
-    //   const payload1 = [
-    //     { email: 'Billy', password: '21' },
-    //     { email: 'Alaric', password: '24' }
-    //   ]
-    //   const users = payload1.map((item) => new User({ email: item.email, password: item.password }))
-
-    //   const result = await databaseService.users.insertMany(users)
-    //   return result
-    // }
-
     const result = await databaseService.users.insertOne(
       new User({ ...payload, date_of_birth: new Date(payload.date_of_birth), password: hashPassword(payload.password) })
     )
 
     const user_id = result.insertedId.toString()
-    const [accessToken, refreshToken] = await Promise.all([
-      this.signAccessToken(user_id),
-      this.signRefreshToken(user_id)
-    ])
+    const [accessToken, refreshToken] = await this.generateAccessAndRefreshToken(user_id)
+
+    await databaseService.refreshToken.insertOne(
+      new RefreshToken({ user_id: new ObjectId(user_id), token: refreshToken })
+    )
     return { accessToken, refreshToken }
   }
 
   async emailExisted(email: string) {
     const user = await databaseService.users.findOne({ email })
     return Boolean(user)
+  }
+
+  async login(user_id: string) {
+    const [accessToken, refreshToken] = await this.generateAccessAndRefreshToken(user_id)
+    await databaseService.refreshToken.insertOne(
+      new RefreshToken({ user_id: new ObjectId(user_id), token: refreshToken })
+    )
+    return { accessToken, refreshToken }
+  }
+
+  async generateAccessAndRefreshToken(user_id: string) {
+    return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
   }
 }
 const userService = new UsersService()

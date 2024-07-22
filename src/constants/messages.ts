@@ -17,5 +17,8 @@ export const USER_MESSAGE = {
   CONFIRM_PASSWORD_NOT_MATCH: 'Password confirmation does not match password',
   CONFIRM_PASSWORD_MUST_BE_STRONG:
     'Confirm password must be at least 6 characters long and contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol',
-  DATE_OF_BIRTH_MUST_BE_ISO8601: 'Date of birth must be in ISO 8601 format'
+  DATE_OF_BIRTH_MUST_BE_ISO8601: 'Date of birth must be in ISO 8601 format',
+  USER_NOT_FOUND: 'Email or password is incorrect',
+  LOGIN_SUCCESS: 'Login success',
+  REGISTER_SUCCESS: 'Register success'
 } as const
