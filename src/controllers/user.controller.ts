@@ -28,3 +28,5 @@ export const registerController = async (
     result
   })
 }
+
+export const logOutController = () => {}
