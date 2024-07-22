@@ -14,9 +14,9 @@ databaseService.connect()
 app.use(express.json())
 
 //Xử lý error handler phải nhận về 4 tham số
-app.use(defaultErrorHandler)
 
 app.use('/api/user', userRouter)
+app.use(defaultErrorHandler)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
