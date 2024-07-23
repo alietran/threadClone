@@ -1,12 +1,14 @@
 import { checkSchema } from 'express-validator'
+import { JsonWebTokenError } from 'jsonwebtoken'
+import { capitalize } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { ErrorWithStatus } from '~/models/Errors'
 import databaseService from '~/services/database.service'
 import userService from '~/services/user.service'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 import { USER_MESSAGE } from './../constants/messages'
+import { ErrorWithStatus } from './../models/Errors'
 
 export const loginValidator = validate(
   checkSchema(
@@ -154,17 +156,64 @@ export const accessTokenValidator = validate(
             const access_token = value.split(' ')[1]
             if (!access_token) {
               throw new ErrorWithStatus({
-                message: USER_MESSAGE.ACCESS_TOKEN_IS_REQUIRED,
+                message: USER_MESSAGE.ACCESS_TOKEN_IS_INVALID,
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
-            const decode = await verifyToken({ token: access_token })
-            req.decode = decode
+            try {
+              const decode = await verifyToken({ token: access_token })
+              req.decode = decode
+            } catch (error) {
+              throw new ErrorWithStatus({
+                message: capitalize((error as JsonWebTokenError).message),
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
             return true
           }
         }
       }
     },
     ['headers']
+  )
+)
+
+export const refreshTokenValidator = validate(
+  checkSchema(
+    {
+      refresh_token: {
+        notEmpty: {
+          errorMessage: USER_MESSAGE.REFRESH_TOKEN_IS_REQUIRED
+        },
+        custom: {
+          options: async (value: string, { req }) => {
+            try {
+              const [decode, refresh_token] = await Promise.all([
+                verifyToken({ token: value }),
+                databaseService.refreshToken.findOne({
+                  token: value
+                })
+              ])
+              req.decode = decode
+              if (!refresh_token) {
+                throw new ErrorWithStatus({
+                  message: USER_MESSAGE.USED_REFRESH_TOKEN_OR_NOT_EXISTED,
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              }
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  message: capitalize(error.message),
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              } else throw error
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body']
   )
 )

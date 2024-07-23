@@ -1,6 +1,7 @@
 import { config } from 'dotenv'
 import { ObjectId } from 'mongodb'
 import { TokenType } from '~/constants/enums'
+import { USER_MESSAGE } from '~/constants/messages'
 import { RegisterDTO } from '~/models/dto/user.dto'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import User from '~/models/schemas/User.schema'
@@ -62,6 +63,13 @@ class UsersService {
 
   async generateAccessAndRefreshToken(user_id: string) {
     return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
+  }
+
+  async logout(refreshToken: string) {
+    await databaseService.refreshToken.deleteOne({ token: refreshToken })
+    return {
+      message: USER_MESSAGE.LOGOUT_SUCCESS
+    }
   }
 }
 const userService = new UsersService()

@@ -29,4 +29,9 @@ export const registerController = async (
   })
 }
 
-export const logOutController = () => {}
+export const logOutController = async (req: Request, res: Response) => {
+  const result = userService.logout(req.body.refresh_token)
+  return res.json({
+    message: USER_MESSAGE.LOGOUT_SUCCESS
+  })
+}
