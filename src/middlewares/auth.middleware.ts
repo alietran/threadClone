@@ -2,13 +2,13 @@ import { checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { capitalize } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
+import userService from '~/services/auth.service'
 import databaseService from '~/services/database.service'
-import userService from '~/services/user.service'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
-import { USER_MESSAGE } from './../constants/messages'
-import { ErrorWithStatus } from './../models/Errors'
+import { USER_MESSAGE } from '../constants/messages'
+import { ErrorWithStatus } from '../models/Errors'
 
 export const loginValidator = validate(
   checkSchema(

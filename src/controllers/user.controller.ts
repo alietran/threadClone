@@ -2,9 +2,9 @@ import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ObjectId } from 'mongodb'
 import { USER_MESSAGE } from '~/constants/messages'
-import { RegisterDTO } from '~/models/dto/user.dto'
+import { RegisterDTO } from '~/models/dto/auth.dto'
 import User from '~/models/schemas/User.schema'
-import userService from '~/services/user.service'
+import userService from '~/services/auth.service'
 
 export const loginController = async (req: Request, res: Response) => {
   console.log(req)

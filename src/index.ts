@@ -1,6 +1,6 @@
 import express from 'express'
 import { defaultErrorHandler } from './middlewares/error.middleware'
-import userRouter from './routes/users.routes'
+import userRouter from './routes/auth.routes'
 import databaseService from './services/database.service'
 
 const app = express()

@@ -5,7 +5,7 @@ import {
   loginValidator,
   refreshTokenValidator,
   registerValidator
-} from '~/middlewares/users.middleware'
+} from '~/middlewares/auth.middleware'
 import { wrapRequestHandler } from '~/utils/handlers'
 const userRouter = express()
 
