@@ -2,7 +2,7 @@ import { checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { capitalize } from 'lodash'
 import HTTP_STATUS from '~/constants/httpStatus'
-import userService from '~/services/auth.service'
+import authService from '~/services/auth.service'
 import databaseService from '~/services/database.service'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
@@ -79,7 +79,7 @@ export const registerValidator = validate(
         trim: true,
         custom: {
           options: async (value) => {
-            const isExistEmail = await userService.emailExisted(value)
+            const isExistEmail = await authService.emailExisted(value)
             if (isExistEmail) {
               throw new Error(USER_MESSAGE.EMAIL_ALREADY_EXIST)
             }

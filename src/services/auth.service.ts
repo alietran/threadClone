@@ -9,7 +9,7 @@ import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import databaseService from './database.service'
 config()
-class UsersService {
+class AuthService {
   private signAccessToken(user_id: string) {
     return signToken({
       payload: {
@@ -72,5 +72,5 @@ class UsersService {
     }
   }
 }
-const userService = new UsersService()
-export default userService
+const authService = new AuthService()
+export default authService

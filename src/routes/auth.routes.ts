@@ -1,5 +1,5 @@
 import express from 'express'
-import { loginController, logOutController, registerController } from '~/controllers/user.controller'
+import { loginController, logOutController, registerController } from '~/controllers/auth.controller'
 import {
   accessTokenValidator,
   loginValidator,
