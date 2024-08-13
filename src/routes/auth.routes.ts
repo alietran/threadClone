@@ -1,7 +1,13 @@
 import express from 'express'
-import { loginController, logOutController, registerController } from '~/controllers/auth.controller'
+import {
+  emailVerifyValidator,
+  loginController,
+  logOutController,
+  registerController
+} from '~/controllers/auth.controller'
 import {
   accessTokenValidator,
+  emailTokenValidator,
   loginValidator,
   refreshTokenValidator,
   registerValidator
@@ -13,4 +19,5 @@ userRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
 userRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
 userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logOutController))
 
+userRouter.post('/verifyEmail', emailTokenValidator, wrapRequestHandler(emailVerifyValidator))
 export default userRouter

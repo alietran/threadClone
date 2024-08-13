@@ -34,3 +34,7 @@ export const logOutController = async (req: Request, res: Response) => {
     message: USER_MESSAGE.LOGOUT_SUCCESS
   })
 }
+
+export const emailVerifyValidator = async (req: Request, res: Response, next: NextFunction) => {
+  const email_verify_token = req.body.email_verify_token
+}
