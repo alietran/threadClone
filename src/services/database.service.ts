@@ -5,7 +5,6 @@ import User from '~/models/schemas/User.schema'
 
 dotenv.config()
 const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.exigfbk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
-console.log(url)
 class DatabaseService {
   private client: MongoClient
   private db: Db

@@ -10,7 +10,6 @@ export const validate = (validations: RunnableValidationChains<ValidationChain>)
     // sequential processing, stops running validations chain if one fails.
     await validations.run(req)
     const errors = validationResult(req)
-    console.log(errors)
     if (errors.isEmpty()) {
       return next()
     }

@@ -7,7 +7,6 @@ import User from '~/models/schemas/User.schema'
 import authService from '~/services/auth.service'
 
 export const loginController = async (req: Request, res: Response) => {
-  console.log(req)
   const user = req.user as User
   const user_id = user._id as ObjectId
   const result = await authService.login(user_id.toString())
