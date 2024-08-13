@@ -1,42 +1,20 @@
 import { config } from 'dotenv'
 import { ObjectId } from 'mongodb'
-import { TokenType } from '~/constant/enum'
-import { UserRegisterDTO } from '~/models/dto/UserRegister.dto'
-import { RefreshToken } from '~/models/schemas/refreshToken.schema'
+import { TokenType } from '~/constants/enums'
+import { USER_MESSAGE } from '~/constants/messages'
+import { RegisterDTO } from '~/models/dto/auth.dto'
+import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import { User } from '~/models/schemas/users.schema'
 import { hashPassword } from '~/utils/crypto'
-import { signToken } from './../utils/jwt'
+import { signToken } from '~/utils/jwt'
 import databaseService from './database.service'
 config()
 class AuthService {
-  async register(userInfoDTO: UserRegisterDTO) {
-    const newUser = await databaseService.users.insertOne(
-      new User({
-        ...userInfoDTO,
-        date_of_birth: new Date(userInfoDTO.date_of_birth),
-        password: hashPassword(userInfoDTO.password)
-      })
-    )
-    const user_id = newUser.insertedId.toString()
-    const [accessToken, refreshToken] = await this.generateToken(user_id)
-
-    await databaseService.refreshToken.insertOne(
-      new RefreshToken({
-        token: refreshToken,
-        user_id: new ObjectId(user_id)
-      })
-    )
-  }
-
-  async generateToken(user_id: string) {
-    return Promise.all([this.signAccessToken(user_id), this.refreshToken(user_id)])
-  }
-
-  signAccessToken(user_id: string) {
+  private signAccessToken(user_id: string) {
     return signToken({
       payload: {
         user_id,
-        type: TokenType.AccessToken
+        token_type: TokenType.AccessToken
       },
       options: {
         expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN
@@ -44,11 +22,11 @@ class AuthService {
     })
   }
 
-  refreshToken(user_id: string) {
+  private signRefreshToken(user_id: string) {
     return signToken({
       payload: {
         user_id,
-        type: TokenType.RefreshToken
+        token_type: TokenType.RefreshToken
       },
       options: {
         expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN
@@ -56,11 +34,43 @@ class AuthService {
     })
   }
 
+  async register(payload: RegisterDTO) {
+    const result = await databaseService.users.insertOne(
+      new User({ ...payload, date_of_birth: new Date(payload.date_of_birth), password: hashPassword(payload.password) })
+    )
+
+    const user_id = result.insertedId.toString()
+    const [accessToken, refreshToken] = await this.generateAccessAndRefreshToken(user_id)
+
+    await databaseService.refreshToken.insertOne(
+      new RefreshToken({ user_id: new ObjectId(user_id), token: refreshToken })
+    )
+    return { accessToken, refreshToken }
+  }
+
   async emailExisted(email: string) {
     const user = await databaseService.users.findOne({ email })
     return Boolean(user)
   }
-}
 
+  async login(user_id: string) {
+    const [accessToken, refreshToken] = await this.generateAccessAndRefreshToken(user_id)
+    await databaseService.refreshToken.insertOne(
+      new RefreshToken({ user_id: new ObjectId(user_id), token: refreshToken })
+    )
+    return { accessToken, refreshToken }
+  }
+
+  async generateAccessAndRefreshToken(user_id: string) {
+    return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
+  }
+
+  async logout(refreshToken: string) {
+    await databaseService.refreshToken.deleteOne({ token: refreshToken })
+    return {
+      message: USER_MESSAGE.LOGOUT_SUCCESS
+    }
+  }
+}
 const authService = new AuthService()
 export default authService

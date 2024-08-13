@@ -5,7 +5,7 @@ export const signToken = ({
   payload,
   privateKey = process.env.JWT_SECRET as string,
   options = {
-    algorithm: 'RS256'
+    algorithm: 'HS256'
   }
 }: {
   payload: any
@@ -16,9 +16,8 @@ export const signToken = ({
     jwt.sign(payload, privateKey, options, (error, token) => {
       if (error) {
         reject(error)
-      } else {
-        resolve(token as string)
       }
+      resolve(token as string)
     })
   })
 }
@@ -30,13 +29,12 @@ export const verifyToken = ({
   token: string
   secretOrPublicKey?: string
 }) => {
-  return new Promise((resolve, reject) => {
-    jwt.verify(token, secretOrPublicKey, function (err, decoded) {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(decoded)
+  return new Promise<jwt.JwtPayload>((resolve, reject) => {
+    jwt.verify(token, secretOrPublicKey, (error, decode) => {
+      if (error) {
+        throw reject(error)
       }
+      resolve(decode as jwt.JwtPayload)
     })
   })
 }

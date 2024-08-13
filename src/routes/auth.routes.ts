@@ -1,10 +1,16 @@
 import express from 'express'
-import { registerController } from '~/controllers/auth.controller'
-import { registerValidator } from '~/middlewares/auth.middleware'
+import { loginController, logOutController, registerController } from '~/controllers/auth.controller'
+import {
+  accessTokenValidator,
+  loginValidator,
+  refreshTokenValidator,
+  registerValidator
+} from '~/middlewares/auth.middleware'
 import { wrapRequestHandler } from '~/utils/handlers'
+const userRouter = express()
 
-const authRouter = express()
+userRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
+userRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
+userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logOutController))
 
-authRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
-
-export default authRouter
+export default userRouter
