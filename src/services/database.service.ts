@@ -1,16 +1,16 @@
 import dotenv from 'dotenv'
 import { Collection, Db, MongoClient } from 'mongodb'
-import RefreshToken from '~/models/schemas/refreshToken.schema'
-import { User } from '~/models/schemas/users.schema'
+import RefreshToken from '~/models/schemas/RefreshToken.schema'
+import User from '~/models/schemas/User.schema'
 
 dotenv.config()
-const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.exigfbk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
-
+const url = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.exigfbk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`
+console.log(url)
 class DatabaseService {
   private client: MongoClient
   private db: Db
   constructor() {
-    this.client = new MongoClient(uri)
+    this.client = new MongoClient(url)
     this.db = this.client.db(process.env.DB_NAME)
   }
 

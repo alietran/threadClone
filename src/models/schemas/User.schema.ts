@@ -16,7 +16,7 @@ interface UserType {
   location?: string
 }
 
-export class User {
+export default class User {
   _id?: ObjectId
   name: string
   email: string
