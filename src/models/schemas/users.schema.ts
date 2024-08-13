@@ -1,10 +1,5 @@
 import { ObjectId } from 'mongodb'
-
-enum UserVerifyStatus {
-  Unverified,
-  Verified,
-  Banned
-}
+import { UserVerifyStatus } from '~/constant/enum'
 
 interface UserType {
   _id?: ObjectId
@@ -21,7 +16,7 @@ interface UserType {
   location?: string
 }
 
-export default class User {
+export class User {
   _id?: ObjectId
   name: string
   email: string
