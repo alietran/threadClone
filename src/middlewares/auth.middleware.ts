@@ -160,11 +160,11 @@ export const accessTokenValidator = validate(
               })
             }
             try {
-              const decode = await verifyToken({
+              const decode_authorization = await verifyToken({
                 token: access_token,
                 secretOrPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
               })
-              req.decode = decode
+              ;(req as Request).decode_authorization = decode_authorization
             } catch (error) {
               throw new ErrorWithStatus({
                 message: capitalize((error as JsonWebTokenError).message),

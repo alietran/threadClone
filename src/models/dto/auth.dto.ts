@@ -5,3 +5,16 @@ export interface RegisterDTO {
   password: string
   confirm_password: string
 }
+
+export interface LoginDTO {
+  email: string
+  password: string
+}
+
+export interface VerifyEmailDTO {
+  email_verify_token: string
+}
+
+export interface LogoutDTO {
+  refresh_token: string
+}
