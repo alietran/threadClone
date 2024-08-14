@@ -104,8 +104,12 @@ class AuthService {
         {
           $set: {
             email_verify_token: '',
-            verify: UserVerifyStatus.Verified,
-            updated_at: new Date()
+            verify: UserVerifyStatus.Verified
+            // updated_at: new Date()
+          },
+          //Cập nhật giá trị bằng MongoDB sd currentDate hoặc là $$NOW
+          $currentDate: {
+            updated_at: true
           }
         }
       )
