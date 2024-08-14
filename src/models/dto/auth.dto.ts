@@ -18,3 +18,7 @@ export interface VerifyEmailDTO {
 export interface LogoutDTO {
   refresh_token: string
 }
+
+export interface ForgotPasswordDTO {
+  email: string
+}

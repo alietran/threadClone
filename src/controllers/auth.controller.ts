@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USER_MESSAGE } from '~/constants/messages'
-import { LoginDTO, LogoutDTO, RegisterDTO, VerifyEmailDTO } from '~/models/dto/auth.dto'
+import { ForgotPasswordDTO, LoginDTO, LogoutDTO, RegisterDTO, VerifyEmailDTO } from '~/models/dto/auth.dto'
 import User from '~/models/schemas/User.schema'
 import authService from '~/services/auth.service'
 import databaseService from '~/services/database.service'
@@ -82,5 +82,15 @@ export const resendVerifyEmailController = async (req: Request, res: Response, n
   }
 
   const result = await authService.resendVerifyEmail(user_id)
+  return res.json(result)
+}
+
+export const forgotPasswordController = async (
+  req: Request<ParamsDictionary, any, ForgotPasswordDTO>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { _id } = req.user as User
+  const result = await authService.forgotPassword((_id as ObjectId).toString())
   return res.json(result)
 }

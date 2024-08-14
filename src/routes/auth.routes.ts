@@ -1,5 +1,6 @@
 import express from 'express'
 import {
+  forgotPasswordController,
   loginController,
   logOutController,
   registerController,
@@ -9,17 +10,20 @@ import {
 import {
   accessTokenValidator,
   emailTokenValidator,
+  forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
   registerValidator
 } from '~/middlewares/auth.middleware'
 import { wrapRequestHandler } from '~/utils/handlers'
-const userRouter = express()
+const authRouter = express()
 
-userRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
-userRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
-userRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logOutController))
+authRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
+authRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
+authRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logOutController))
 
-userRouter.post('/verify-email', emailTokenValidator, wrapRequestHandler(verifyEmailController))
-userRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
-export default userRouter
+authRouter.post('/verify-email', emailTokenValidator, wrapRequestHandler(verifyEmailController))
+authRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
+
+authRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
+export default authRouter

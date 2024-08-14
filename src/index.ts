@@ -1,6 +1,6 @@
 import express from 'express'
 import { defaultErrorHandler } from './middlewares/error.middleware'
-import userRouter from './routes/auth.routes'
+import authRouter from './routes/auth.routes'
 import databaseService from './services/database.service'
 
 const app = express()
@@ -18,7 +18,8 @@ app.use(express.json())
 
 //Xử lý error handler phải nhận về 4 tham số
 
-app.use('/api/user', userRouter)
+app.use('/api', authRouter)
+
 app.use(defaultErrorHandler)
 
 app.listen(port, () => {

@@ -49,6 +49,19 @@ class AuthService {
     })
   }
 
+  private signForgotPasswordToken(user_id: string) {
+    return signToken({
+      payload: {
+        user_id,
+        token_type: TokenType.ForgotPassword
+      },
+      privateKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string,
+      options: {
+        expiresIn: process.env.EMAIL_VERIFY_TOKEN_EXPIRES_IN
+      }
+    })
+  }
+
   async register(payload: RegisterDTO) {
     const user_id = new ObjectId()
     const email_verify_token = await this.signEmailVerifyToken(user_id.toString())
@@ -139,6 +152,29 @@ class AuthService {
     )
     return {
       message: USER_MESSAGE.RESEND_EMAIL_VERIFY_SUCCESS
+    }
+  }
+
+  async forgotPassword(user_id: string) {
+    const forgotPassword = await this.signForgotPasswordToken(user_id)
+    databaseService.users.updateOne(
+      {
+        _id: new ObjectId(user_id)
+      },
+      [
+        {
+          $set: {
+            forgot_password_token: forgotPassword,
+            updated_at: '$$NOW'
+          }
+        }
+      ]
+    )
+
+    // gửi email kèm link đến cho người dùng
+    console.log('forgotPassword', forgotPassword)
+    return {
+      message: USER_MESSAGE.CHECK_EMAIL_TO_RESET_PASSWORD_SUCCESS
     }
   }
 }
