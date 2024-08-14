@@ -1,3 +1,4 @@
+import { Request } from 'express'
 import { checkSchema } from 'express-validator'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { capitalize } from 'lodash'
@@ -26,7 +27,7 @@ export const loginValidator = validate(
               password: hashPassword(req.body.password)
             })
             if (!user) {
-              throw new Error(USER_MESSAGE.USER_NOT_FOUND)
+              throw new Error(USER_MESSAGE.USER_INFO_NOT_VALID)
             }
             req.user = user
             return true
@@ -226,7 +227,7 @@ export const refreshTokenValidator = validate(
 export const emailTokenValidator = validate(
   checkSchema(
     {
-      email_token_verify: {
+      email_verify_token: {
         trim: true,
         custom: {
           options: async (value: string, { req }) => {
@@ -236,12 +237,20 @@ export const emailTokenValidator = validate(
                 status: HTTP_STATUS.UNAUTHORIZED
               })
             }
-
-            const decode = await verifyToken({
-              token: value,
-              secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
-            })
-            req.decode = decode
+            try {
+              const decode_email_verify = await verifyToken({
+                token: value,
+                secretOrPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
+              })
+              ;(req as Request).decode_email_verify_token = decode_email_verify
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  message: capitalize(error.message),
+                  status: HTTP_STATUS.UNAUTHORIZED
+                })
+              } else throw error
+            }
 
             return true
           }

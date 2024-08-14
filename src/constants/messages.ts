@@ -18,7 +18,7 @@ export const USER_MESSAGE = {
   CONFIRM_PASSWORD_MUST_BE_STRONG:
     'Confirm password must be at least 6 characters long and contain at least 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol',
   DATE_OF_BIRTH_MUST_BE_ISO8601: 'Date of birth must be in ISO 8601 format',
-  USER_NOT_FOUND: 'Email or password is incorrect',
+  USER_INFO_NOT_VALID: 'Email or password is incorrect',
   LOGIN_SUCCESS: 'Login success',
   REGISTER_SUCCESS: 'Register success',
   ACCESS_TOKEN_IS_REQUIRED: 'Access token must be provided',
@@ -27,5 +27,8 @@ export const USER_MESSAGE = {
   REFRESH_TOKEN_IS_INVALID: 'Refresh token is invalid',
   USED_REFRESH_TOKEN_OR_NOT_EXISTED: 'Used refresh token are not existed',
   LOGOUT_SUCCESS: 'Logout success',
-  EMAIL_VERIFY_TOKEN_IS_REQUIRED: 'Email verify token is required'
+  EMAIL_VERIFY_TOKEN_IS_REQUIRED: 'Email verify token is required',
+  USER_NOT_FOUND: 'User not found',
+  EMAIL_ALREADY_VERIFIED_BEFORE: 'Email already verified before',
+  EMAIL_VERIFY_SUCCESS: 'Email verified successfully'
 } as const
