@@ -5,7 +5,8 @@ import {
   logOutController,
   registerController,
   resendVerifyEmailController,
-  verifyEmailController
+  verifyEmailController,
+  verifyForgotPassController
 } from '~/controllers/auth.controller'
 import {
   accessTokenValidator,
@@ -13,7 +14,8 @@ import {
   forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
-  registerValidator
+  registerValidator,
+  verifyForgotPasswordTokenValidator
 } from '~/middlewares/auth.middleware'
 import { wrapRequestHandler } from '~/utils/handlers'
 const authRouter = express()
@@ -26,4 +28,10 @@ authRouter.post('/verify-email', emailTokenValidator, wrapRequestHandler(verifyE
 authRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
 
 authRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
+authRouter.post(
+  '/verify-forgot-password-token',
+  verifyForgotPasswordTokenValidator,
+  wrapRequestHandler(verifyForgotPassController)
+)
+
 export default authRouter
