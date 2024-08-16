@@ -4,7 +4,14 @@ import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USER_MESSAGE } from '~/constants/messages'
-import { ForgotPasswordDTO, LoginDTO, LogoutDTO, RegisterDTO, VerifyEmailDTO } from '~/models/dto/auth.dto'
+import {
+  ForgotPasswordDTO,
+  LoginDTO,
+  LogoutDTO,
+  RegisterDTO,
+  ResetPasswordDTO,
+  VerifyEmailDTO
+} from '~/models/dto/auth.dto'
 import User from '~/models/schemas/User.schema'
 import authService from '~/services/auth.service'
 import databaseService from '~/services/database.service'
@@ -98,5 +105,19 @@ export const forgotPasswordController = async (
 export const verifyForgotPassController = async (req: Request, res: Response, next: NextFunction) => {
   return res.json({
     message: USER_MESSAGE.FORGOT_PASSWORD_TOKEN_IS_VERIFIED
+  })
+}
+
+export const resetPasswordController = async (
+  req: Request<ParamsDictionary, any, ResetPasswordDTO>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decode_forgot_password_token
+  const { password } = req.body
+
+  const result = await authService.resetPassword(user_id, password)
+  return res.json({
+    result
   })
 }

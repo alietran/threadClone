@@ -22,3 +22,9 @@ export interface LogoutDTO {
 export interface ForgotPasswordDTO {
   email: string
 }
+
+export interface ResetPasswordDTO {
+  password: string
+  confirm_password: string
+  forgot_password_token: string
+}

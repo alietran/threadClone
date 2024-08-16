@@ -177,6 +177,27 @@ class AuthService {
       message: USER_MESSAGE.CHECK_EMAIL_TO_RESET_PASSWORD_SUCCESS
     }
   }
+
+  async resetPassword(user_id: string, password: string) {
+    databaseService.users.updateOne(
+      {
+        _id: new ObjectId(user_id)
+      },
+      [
+        {
+          $set: {
+            password: hashPassword(password),
+            forgot_password_token: '',
+            updated_at: '$$NOW'
+          }
+        }
+      ]
+    )
+
+    return {
+      message: USER_MESSAGE.RESET_PASSWORD_SUCCESS
+    }
+  }
 }
 
 const authService = new AuthService()
